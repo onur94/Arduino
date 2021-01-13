@@ -25,7 +25,7 @@ namespace RGB_Controller
             level = 5;
             animation_index = 1;
             label_level.Text = level.ToString();
-            komut("level:" + (level * 25));
+            command("level:" + (level * 25));
         }
 
         private void button_up_Click(object sender, EventArgs e)
@@ -33,7 +33,7 @@ namespace RGB_Controller
             if (level < 10)
             {
                 level += 1;
-                komut("level:" + level * 25);
+                command("level:" + level * 25);
                 label_level.Text = level.ToString();
             }
         }
@@ -43,7 +43,7 @@ namespace RGB_Controller
             if (level > 1)
             {
                 level -= 1;
-                komut("level:" + level * 25);
+                command("level:" + level * 25);
                 label_level.Text = level.ToString();
             }
         }
@@ -58,7 +58,7 @@ namespace RGB_Controller
                 label_blue.Text = color.B.ToString();
                 string rgb = string.Format("r:{0}g:{1}b:{2}", color.R.ToString().PadLeft(3, '0'), color.G.ToString().PadLeft(3, '0'), color.B.ToString().PadLeft(3, '0'));
                 Console.WriteLine(rgb);
-                komut(rgb);
+                command(rgb);
             }
             catch
             {
@@ -66,7 +66,7 @@ namespace RGB_Controller
             }
         }
 
-        void komut(string komut)
+        void command(string command)
         {
             if (!serialPort1.IsOpen)
             {
@@ -75,8 +75,8 @@ namespace RGB_Controller
                     serialPort1.Open();
                     if (serialPort1.IsOpen)
                     {
-                        Console.WriteLine(komut);
-                        serialPort1.Write(komut);
+                        Console.WriteLine(command);
+                        serialPort1.Write(command);
                         serialPort1.Close();
                     }
                 }
@@ -98,7 +98,7 @@ namespace RGB_Controller
             {
                 animation_index++;
                 label_anim.Text = animation[animation_index - 1];
-                komut("mode:" + animation_index);
+                command("mode:" + animation_index);
             }
         }
 
@@ -108,13 +108,13 @@ namespace RGB_Controller
             {
                 animation_index--;
                 label_anim.Text = animation[animation_index - 1];
-                komut("mode:" + animation_index);
+                command("mode:" + animation_index);
             }
         }
 
         private void label_anim_Click(object sender, EventArgs e)
         {
-            komut("mode:" + animation_index);
+            command("mode:" + animation_index);
         }
 
         private void button_minimize_Click(object sender, EventArgs e)

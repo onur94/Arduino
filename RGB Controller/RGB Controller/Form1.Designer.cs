@@ -51,7 +51,7 @@ namespace RGB_Controller
             // serialPort1
             // 
             this.serialPort1.BaudRate = 115200;
-            this.serialPort1.PortName = "COM4";
+            this.serialPort1.PortName = "COM14";
             // 
             // button_up
             // 
