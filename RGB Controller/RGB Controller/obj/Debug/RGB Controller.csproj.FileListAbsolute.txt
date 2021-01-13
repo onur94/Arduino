@@ -1,0 +1,9 @@
+C:\Users\onuur\source\repos\RGB Controller\RGB Controller\bin\Debug\RGB Controller.exe.config
+C:\Users\onuur\source\repos\RGB Controller\RGB Controller\bin\Debug\RGB Controller.exe
+C:\Users\onuur\source\repos\RGB Controller\RGB Controller\bin\Debug\RGB Controller.pdb
+C:\Users\onuur\source\repos\RGB Controller\RGB Controller\obj\Debug\RGB_Controller.Form1.resources
+C:\Users\onuur\source\repos\RGB Controller\RGB Controller\obj\Debug\RGB_Controller.Properties.Resources.resources
+C:\Users\onuur\source\repos\RGB Controller\RGB Controller\obj\Debug\RGB Controller.csproj.GenerateResource.cache
+C:\Users\onuur\source\repos\RGB Controller\RGB Controller\obj\Debug\RGB Controller.csproj.CoreCompileInputs.cache
+C:\Users\onuur\source\repos\RGB Controller\RGB Controller\obj\Debug\RGB Controller.exe
+C:\Users\onuur\source\repos\RGB Controller\RGB Controller\obj\Debug\RGB Controller.pdb
