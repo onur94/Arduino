@@ -1,7 +1,7 @@
 #include <Adafruit_NeoPixel.h>
 #include <EEPROM.h>
 
-#define LED             13                                   // (Don't Change for Original Sonoff, Sonoff SV, Sonoff Touch, Sonoff S20 Socket)
+#define LED             12
 #define PIXEL_PIN       D5
 #define PIXEL_COUNT     60 
 
@@ -38,9 +38,7 @@ bool stringComplete = false;
 void setup() {
   EEPROM.begin(512);
   Serial.begin(115200);
-  /*EEPROM.write(0, 1);   
-  EEPROM.write(1, 100);  
-  EEPROM.commit();*/
+
   
   command = EEPROM.read(0);
   _level = EEPROM.read(1);
@@ -50,12 +48,10 @@ void setup() {
   Serial.print("Level: ");
   Serial.println(_level);
   
-  strip.begin(); // Initialize NeoPixel strip object (REQUIRED)
+  strip.begin();
   strip.setBrightness(_level);
   strip.clear();
-  strip.show();  // Initialize all pixels to 'off'
-
-  // Connect to WiFi network
+  strip.show(); 
   
   for(int x = 0; x < 10; x++)
   {
@@ -72,14 +68,14 @@ void setup() {
 void loop()
 {
      while (Serial.available()) {
-      delay(3);  //delay to allow buffer to fill
+      delay(3);
       if (Serial.available() >0) {
-        char c = Serial.read();  //gets one byte from serial buffer
-        readString += c; //makes the string readString
+        char c = Serial.read();
+        readString += c;
       }
     }
     if (readString.length() >0) {
-      Serial.println(readString); //see what was received
+      Serial.println(readString);
       rgb_mode(readString);
       readString = "";
     }
@@ -96,18 +92,32 @@ void loop()
         Serial.println(command);
       }
     }
-    if(command == 2) // color wipe
+	if(command == 1) // rainbow
+    {
+      if(firstPixelHue < 5*65536) {
+        for(int i=0; i<strip.numPixels(); i++) {
+          pixelHue = firstPixelHue + (i * 65536L / strip.numPixels());
+          strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(pixelHue)));
+        } 
+        strip.show();
+        delay(10);
+        firstPixelHue += 256;
+      }
+      else
+        firstPixelHue = 0;
+    }
+    else if(command == 2) // color wipe
     {
       if (i<strip.numPixels())
       {
         if(color_level == 1)
-          strip.setPixelColor(i, strip.Color(255,   0,   0));         //  Set pixel's color (in RAM)
+          strip.setPixelColor(i, strip.Color(255,   0,   0));
         else if(color_level == 2)
-          strip.setPixelColor(i, strip.Color(0,   255,   0));         //  Set pixel's color (in RAM)
+          strip.setPixelColor(i, strip.Color(0,   255,   0));
         else if(color_level == 3)
-          strip.setPixelColor(i, strip.Color(0,   0,   255));         //  Set pixel's color (in RAM)
-        strip.show();                          //  Update strip to match
-        delay(30);                           //  Pause for a moment
+          strip.setPixelColor(i, strip.Color(0,   0,   255));
+        strip.show(); 
+        delay(30);       
         i++;
       }
       else
@@ -117,20 +127,6 @@ void loop()
         if(color_level == 4)
           color_level = 1;
       }
-    }
-    else if(command == 1) // rainbow
-    {
-      if(firstPixelHue < 5*65536) {
-        for(int i=0; i<strip.numPixels(); i++) {
-          pixelHue = firstPixelHue + (i * 65536L / strip.numPixels());
-          strip.setPixelColor(i, strip.gamma32(strip.ColorHSV(pixelHue)));
-        } 
-        strip.show(); // Update strip with new contents
-        delay(10);  // Pause for a moment
-        firstPixelHue += 256;
-      }
-      else
-        firstPixelHue = 0;
     }
     else if(command == 3) // random theater
     {
@@ -152,8 +148,8 @@ void loop()
               break;
           }
         }
-        strip.show(); // Update strip with new contents
-        delay(50);  // Pause for a moment
+        strip.show();
+        delay(50);
         i++;
       }
       else
@@ -164,15 +160,15 @@ void loop()
           color_level = 1;
       }
     }
-    else if(command == 4)
+    else if(command == 4) // Kitt
     {
       if(0<i && i<strip.numPixels())
       {
         strip.clear();
         i += effect_direction;
         strip.setPixelColor(i, strip.Color(255, 0, 0));   
-        strip.show(); // Update strip with new contents
-        delay(10);  // Pause for a moment
+        strip.show();
+        delay(10);
       }
       else
       {
@@ -184,10 +180,10 @@ void loop()
       }
     }
     
-    else if(command == 5)
+    else if(command == 5) // Cylon
       CylonBounce(random(0, 255), random(0, 255), random(0, 255), 4, 10, 50);
       
-    else if(command == 6)
+    else if(command == 6) // Running
     {
       if(j < strip.numPixels()*2)
       {
@@ -227,9 +223,9 @@ void loop()
         Position = 0;
       }
     }
-    else if(command == 7)
+    else if(command == 7) // Meteor
       meteorRain(0xff,0xff,0xff,10, 64, true, 30);
-    else if(command == 8)
+    else if(command == 8) // Twinkle
     {
       if(i<strip.numPixels()) 
       {
@@ -244,7 +240,7 @@ void loop()
         strip.clear();
       }
     }
-    else if(command == 9)
+    else if(command == 9) // Fade
     {
       if(j<3)
       {
@@ -368,8 +364,6 @@ void rgb_mode(String _data)
   }
   else {
     Serial.println("invalid request");
-    /*client.stop();
-      return;*/
   }
 }
 
@@ -404,14 +398,12 @@ void meteorRain(byte red, byte green, byte blue, byte meteorSize, byte meteorTra
   strip.clear();
   for(int i = 0; i < strip.numPixels()*2; i++) {
 
-    // fade brightness all LEDs one step
     for(int j=0; j<strip.numPixels(); j++) {
       if( (!meteorRandomDecay) || (random(10)>5) ) {
         fadeToBlack(j, meteorTrailDecay );        
       }
     }
     
-    // draw meteor
     for(int j = 0; j < meteorSize; j++) {
       if( ( i-j <strip.numPixels()) && (i-j>=0) ) {
         strip.setPixelColor(i-j, red, green, blue);
@@ -425,7 +417,6 @@ void meteorRain(byte red, byte green, byte blue, byte meteorSize, byte meteorTra
 
 void fadeToBlack(int ledNo, byte fadeValue) {
  #ifdef ADAFRUIT_NEOPIXEL_H 
-    // NeoPixel
     uint32_t oldColor;
     uint8_t r, g, b;
     int value;
